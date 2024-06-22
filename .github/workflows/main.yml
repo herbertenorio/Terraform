@@ -28,6 +28,6 @@ jobs:
       - name: Terraform Plan
         run: terraform plan
 
-      - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      - name: Terraform Apply with Auto-approve for Non-main Branches
+        if: github.ref != 'refs/heads/main'
         run: terraform apply -auto-approve
