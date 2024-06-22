@@ -1,2 +1,2 @@
-resource_group_name = "rg-teste-runner-github-01"
+resource_group_name = "rg-teste-runner-github-actions"
 location            = "eastus2"
