@@ -5,6 +5,9 @@ jobs:
   build-and-deploy:
     runs-on: self-hosted
     steps:
+      - name: Print Runner User
+        run: |
+          echo "Runner user: $(whoami)"
       - name: Azure login
         uses: azure/login@v2
         with:
