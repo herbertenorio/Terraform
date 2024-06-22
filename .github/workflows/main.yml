@@ -15,7 +15,7 @@ jobs:
       - name: Get Storage Account Key
         id: get-key
         run: |
-          ACCOUNT_KEY=$(az storage account keys list --resource-group RG-terraform-state-dev --account-name tfstate00project00aks --query '[0].value' -o tsv)
+          ACCOUNT_KEY=$(az storage account keys list --resource-group {{ secrets.TF_BACKEND_RESOURCE_GROUP_NAME }} --account-name {{ secrets.TF_BACKEND_STORAGE_ACCOUNT_NAME }}  --query '[0].value' -o tsv)
           echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> $GITHUB_ENV
 
       - name: Checkout code
