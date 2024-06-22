@@ -19,7 +19,7 @@ jobs:
           echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> $GITHUB_ENV
 
       - name: Checkout code
-        uses: actions/checkout@v2    
+        uses: actions/checkout@v4    
 
       - name: Terraform Init
         run: terraform init
