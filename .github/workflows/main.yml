@@ -5,9 +5,6 @@ jobs:
   build-and-deploy:
     runs-on: self-hosted
     steps:
-      - name: Print Runner User
-        run: |
-          echo "Runner user: $(whoami)"
       - name: Azure login
         uses: azure/login@v2
         with:
@@ -15,12 +12,17 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      - name: Get Storage Account Key
+        id: get-key
+        run: |
+          ACCOUNT_KEY=$(az storage account keys list --resource-group RG-terraform-state-dev --account-name tfstate00project00aks --query '[0].value' -o tsv)
+          echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> $GITHUB_ENV
 
       - name: Checkout code
         uses: actions/checkout@v2    
 
       - name: Terraform Init
-        run: terraform init 
+        run: terraform init
 
       - name: Terraform Validate
         run: terraform validate
@@ -28,6 +30,6 @@ jobs:
       - name: Terraform Plan
         run: terraform plan
 
-      - name: Terraform Apply with Auto-approve for Non-main Branches
-        if: github.ref != 'refs/heads/main'
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
