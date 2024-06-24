@@ -4,6 +4,8 @@ on: [push]
 jobs:
   az-login:
     runs-on: self-hosted
+    outputs:
+      AZURE_CREDENTIALS: ${{ steps.save-creds.outputs.AZURE_CREDENTIALS }}
     steps:
       - name: Azure login
         uses: azure/login@v2
@@ -12,11 +14,19 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
       - name: Get Storage Account Key
         id: get-key
         run: |
           ACCOUNT_KEY=$(az storage account keys list --resource-group ${{ secrets.TF_BACKEND_RESOURCE_GROUP_NAME }} --account-name ${{ secrets.TF_BACKEND_STORAGE_ACCOUNT_NAME }}  --query '[0].value' -o tsv)
           echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> $GITHUB_ENV
+
+      - name: Save Azure Credentials
+        id: save-creds
+        run: |
+          TOKEN=$(az account get-access-token --output json)
+          echo "${TOKEN}" > $GITHUB_WORKSPACE/azure_token.json
+        shell: bash
   
   terraform-plan:
     name: 'Terraform Plan'
@@ -32,6 +42,11 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v4
+    
+    - name: Restore Azure Credentials
+        run: |
+          cp $GITHUB_WORKSPACE/azure_token.json $HOME/.azure/accessTokens.json
+        shell: bash
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
@@ -120,6 +135,11 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v4
+    
+    - name: Restore Azure Credentials
+        run: |
+          cp $GITHUB_WORKSPACE/azure_token.json $HOME/.azure/accessTokens.json
+        shell: bash
 
     # # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     # - name: Terraform Init
