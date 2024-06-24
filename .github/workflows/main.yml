@@ -13,12 +13,11 @@ jobs:
       tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
 
     steps:
+      uses: ./.github/workflows/login.yml
+
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v4
-    
-    - name: Azure login
-      uses: ./login.yml
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
@@ -59,11 +58,13 @@ jobs:
     needs: [terraform-plan]
     
     steps:
+      uses: ./.github/workflows/login.yml
+
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v4
     
-   - name: Azure login
+    - name: Azure login  
       uses: ./login.yml
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
