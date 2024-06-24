@@ -24,9 +24,9 @@ jobs:
       - name: Save Azure Credentials
         id: save-creds
         run: |
-          TOKEN=$(az account get-access-token --output json)
-          echo "${TOKEN}" > $GITHUB_WORKSPACE/azure_token.json
-        shell: bash
+          echo "AZURE_CREDENTIALS=$(az account get-access-token --resource https://management.azure.com/ --output json)" >> $GITHUB_ENV
+        # env:
+        #   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
   
   terraform-plan:
     name: 'Terraform Plan'
@@ -45,8 +45,7 @@ jobs:
     
     - name: Restore Azure Credentials
       run: |
-        cp $GITHUB_WORKSPACE/azure_token.json $HOME/.azure/accessTokens.json
-      shell: bash
+        echo ${{ needs.az-login.outputs.AZURE_CREDENTIALS }} > ~/.azure/credentials
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
@@ -138,8 +137,7 @@ jobs:
     
     - name: Restore Azure Credentials
       run: |
-        cp $GITHUB_WORKSPACE/azure_token.json $HOME/.azure/accessTokens.json
-      shell: bash
+        echo ${{ needs.az-login.outputs.AZURE_CREDENTIALS }} > ~/.azure/credentials
 
     # # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     # - name: Terraform Init
