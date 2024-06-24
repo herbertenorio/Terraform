@@ -46,10 +46,8 @@ jobs:
     - name: Terraform Plan
       id: tf-plan
       run: |
-        terraform plan -detailed-exitcode -no-color -out tfplan
-        exitcode=$?
-
-        echo "exitcode=$exitcode" >> $GITHUB_OUTPUT
+        terraform plan -detailed-exitcode -no-color -out tfplan || true
+        echo "exitcode=$?" >> $GITHUB_OUTPUT
         
         if [ $exitcode -eq 1 ]; then
           echo Terraform Plan Failed!
