@@ -1,5 +1,9 @@
 name: Run Azure Login with User-assigned Managed Identity
-on: [push]
+on:
+  push:
+    branches:
+      - '**'
+  workflow_dispatch:
 
 jobs:
   terraform-plan:
@@ -87,7 +91,7 @@ jobs:
                 
   terraform-apply:
     name: 'Terraform Apply'
-    if: github.ref == 'refs/heads/main' && needs.terraform-plan.outputs.tfplanExitCode == 2
+    if: needs.terraform-plan.outputs.tfplanExitCode != '2' && (github.event_name == 'workflow_dispatch' || github.ref != 'refs/heads/main')
     runs-on: self-hosted
     # environment: production
     needs: [terraform-plan]
