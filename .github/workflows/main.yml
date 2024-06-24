@@ -65,7 +65,7 @@ jobs:
                 
   terraform-apply:
     name: 'Terraform Apply'
-    if: needs.terraform-plan.outputs.tfplanExitCode == '2' && github.event_name == 'workflow_dispatch'
+    if: ${{ needs.terraform-plan.outputs.tfplanExitCode == '2' && github.event_name == 'workflow_dispatch' }}
     runs-on: self-hosted
     # environment: production
     needs: [terraform-plan]
