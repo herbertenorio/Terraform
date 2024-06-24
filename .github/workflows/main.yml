@@ -7,7 +7,6 @@ on:
 
 jobs:
   az-login:
-    name: Azure login
     uses: ./.github/workflows/login.yml
   terraform-plan:
     name: 'Terraform Plan'
