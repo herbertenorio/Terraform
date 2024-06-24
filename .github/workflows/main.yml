@@ -5,8 +5,9 @@ jobs:
   az-login:
     runs-on: self-hosted
     outputs:
-      AZURE_CREDENTIALS: ${{ steps.save-creds.outputs.AZURE_CREDENTIALS }}
+      # AZURE_CREDENTIALS: ${{ steps.save-creds.outputs.AZURE_CREDENTIALS }}
       ARM_ACCESS_KEY: ${{ steps.get-key-st.outputs.ARM_ACCESS_KEY }}
+      AZURE_ACCESS_TOKEN: ${{ steps.save-token.outputs.AZURE_ACCESS_TOKEN }}
     steps:
       - name: Azure login
         uses: azure/login@v2
@@ -22,10 +23,10 @@ jobs:
           ACCOUNT_KEY=$(az storage account keys list --resource-group ${{ secrets.TF_BACKEND_RESOURCE_GROUP_NAME }} --account-name ${{ secrets.TF_BACKEND_STORAGE_ACCOUNT_NAME }}  --query '[0].value' -o tsv)
           echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> $GITHUB_ENV
 
-      # - name: Save Azure Credentials
-      #   id: save-creds
-      #   run: |
-      #     echo "AZURE_CREDENTIALS=$(az account get-access-token --resource https://management.azure.com/ --query 'accessToken' -o tsv)" >> $GITHUB_ENV
+      - name: Save Azure Credentials
+        id: save-token
+        run: |
+          echo "AZURE_ACCESS_TOKEN=$(az account get-access-token --resource https://management.azure.com/ --query 'accessToken' -o tsv)" >> $GITHUB_ENV
       #   # env:
       #   #   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
   
@@ -73,7 +74,8 @@ jobs:
       env:
           ARM_USE_MSI: "true"
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-          ARM_ACCESS_KEY: ${{ needs.az-login.outputs.ARM_ACCESS_KEY }}
+          # ARM_ACCESS_KEY: ${{ needs.az-login.outputs.ARM_ACCESS_KEY }}
+          ARM_ACCESS_TOKEN: ${{ needs.az-login.outputs.AZURE_ACCESS_TOKEN }}
       run: |
         export exitcode=0
         terraform plan -detailed-exitcode -no-color -out tfplan || export exitcode=$?
