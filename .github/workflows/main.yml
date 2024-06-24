@@ -9,11 +9,11 @@ jobs:
   terraform-plan:
     name: 'Terraform Plan'
     runs-on: self-hosted
+    uses: ./.github/workflows/login.yml
     outputs:
       tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
-
+    
     steps:
-      uses: ./.github/workflows/login.yml
 
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
@@ -56,9 +56,8 @@ jobs:
     runs-on: self-hosted
     # environment: production
     needs: [terraform-plan]
-    
+    uses: ./.github/workflows/login.yml
     steps:
-      uses: ./.github/workflows/login.yml
 
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
