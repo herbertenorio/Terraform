@@ -21,12 +21,12 @@ jobs:
           ACCOUNT_KEY=$(az storage account keys list --resource-group ${{ secrets.TF_BACKEND_RESOURCE_GROUP_NAME }} --account-name ${{ secrets.TF_BACKEND_STORAGE_ACCOUNT_NAME }}  --query '[0].value' -o tsv)
           echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> $GITHUB_ENV
 
-      - name: Save Azure Credentials
-        id: save-creds
-        run: |
-          echo "AZURE_CREDENTIALS=$(az account get-access-token --resource https://management.azure.com/ --output json)" >> $GITHUB_ENV
-        # env:
-        #   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+      # - name: Save Azure Credentials
+      #   id: save-creds
+      #   run: |
+      #     echo "AZURE_CREDENTIALS=$(az account get-access-token --resource https://management.azure.com/ --query 'accessToken' -o tsv)" >> $GITHUB_ENV
+      #   # env:
+      #   #   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
   
   terraform-plan:
     name: 'Terraform Plan'
@@ -43,9 +43,15 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     
-    - name: Restore Azure Credentials
+    # - name: Restore Azure Credentials
+    #   run: |
+    #     echo ${{ needs.az-login.outputs.AZURE_CREDENTIALS }} > ~/.azure/credentials
+    
+    - name: Set up Azure CLI
       run: |
-        echo ${{ needs.az-login.outputs.AZURE_CREDENTIALS }} > ~/.azure/credentials
+        az login --identity --username "${{ secrets.AZURE_CLIENT_ID }}"
+        az account set --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
