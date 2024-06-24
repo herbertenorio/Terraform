@@ -57,7 +57,8 @@ jobs:
     - name: Terraform Init
       run: terraform init
       env:
-          ARM_ACCESS_KEY: ${{ secrets.ARM_ACCESS_KEY }}
+          ARM_USE_MSI: "true"
+          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
     # Checks that all Terraform configuration files adhere to a canonical format
     # Will fail the build if not
