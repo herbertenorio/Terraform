@@ -11,6 +11,7 @@ jobs:
   terraform-plan:
     name: 'Terraform Plan'
     runs-on: self-hosted
+    needs: [az-login]
     outputs:
       tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
     
