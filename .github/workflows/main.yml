@@ -2,44 +2,9 @@ name: Run Azure Login with User-assigned Managed Identity
 on: [push]
 
 jobs:
-  az-login:
-    runs-on: self-hosted
-    outputs:
-      # AZURE_CREDENTIALS: ${{ steps.save-creds.outputs.AZURE_CREDENTIALS }}
-      ARM_ACCESS_KEY: ${{ steps.get-key-st.outputs.ARM_ACCESS_KEY }}
-      AZURE_ACCESS_TOKEN: ${{ steps.save-token.outputs.AZURE_ACCESS_TOKEN }}
-    steps:
-      - name: Azure login
-        uses: azure/login@v2
-        with:
-          auth-type: IDENTITY
-          client-id: ${{ secrets.AZURE_CLIENT_ID }}
-          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-      - name: Get Storage Account Key
-        id: get-key-st
-        run: |
-          ACCOUNT_KEY=$(az storage account keys list --resource-group ${{ secrets.TF_BACKEND_RESOURCE_GROUP_NAME }} --account-name ${{ secrets.TF_BACKEND_STORAGE_ACCOUNT_NAME }}  --query '[0].value' -o tsv)
-          echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> $GITHUB_ENV
-
-      - name: Save Azure Credentials
-        id: save-token
-        run: |
-          echo "AZURE_ACCESS_TOKEN=$(az account get-access-token --resource https://management.azure.com/ --query 'accessToken' -o tsv)" >> $GITHUB_ENV
-      #   # env:
-      #   #   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-  
   terraform-plan:
     name: 'Terraform Plan'
     runs-on: self-hosted
-    needs: az-login
-    env:
-          ARM_USE_MSI: "true"
-          ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-    # env:
-    #   #this is needed since we are running terraform with read-only permissions
-    #   ARM_SKIP_PROVIDER_REGISTRATION: true
     outputs:
       tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
 
@@ -48,14 +13,19 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     
-    # - name: Restore Azure Credentials
-    #   run: |
-    #     echo ${{ needs.az-login.outputs.AZURE_CREDENTIALS }} > ~/.azure/credentials
-    
-    # - name: Set up Azure CLI
-    #   run: |
-    #     az login --identity --username "${{ secrets.AZURE_CLIENT_ID }}"
-    #     az account set --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+    - name: Azure login
+          uses: azure/login@v2
+          with:
+            auth-type: IDENTITY
+            client-id: ${{ secrets.AZURE_CLIENT_ID }}
+            tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+            subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Get Storage Account Key
+      id: get-key-st
+      run: |
+        ACCOUNT_KEY=$(az storage account keys list --resource-group ${{ secrets.TF_BACKEND_RESOURCE_GROUP_NAME }} --account-name ${{ secrets.TF_BACKEND_STORAGE_ACCOUNT_NAME }}  --query '[0].value' -o tsv)
+        echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> $GITHUB_ENV
 
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
@@ -144,9 +114,19 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
     
-    - name: Restore Azure Credentials
+    - name: Azure login
+          uses: azure/login@v2
+          with:
+            auth-type: IDENTITY
+            client-id: ${{ secrets.AZURE_CLIENT_ID }}
+            tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+            subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Get Storage Account Key
+      id: get-key-st
       run: |
-        echo ${{ needs.az-login.outputs.AZURE_CREDENTIALS }} > ~/.azure/credentials
+        ACCOUNT_KEY=$(az storage account keys list --resource-group ${{ secrets.TF_BACKEND_RESOURCE_GROUP_NAME }} --account-name ${{ secrets.TF_BACKEND_STORAGE_ACCOUNT_NAME }}  --query '[0].value' -o tsv)
+        echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> $GITHUB_ENV
 
     # # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     # - name: Terraform Init
