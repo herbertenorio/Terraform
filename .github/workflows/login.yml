@@ -5,7 +5,7 @@ jobs:
   Login:
     runs-on: self-hosted
     steps:
-
+      - name: Checkout
       uses: actions/checkout@v4
     
       - name: Azure login
