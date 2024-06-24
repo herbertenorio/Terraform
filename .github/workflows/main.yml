@@ -33,7 +33,7 @@ jobs:
   terraform-plan:
     name: 'Terraform Plan'
     runs-on: self-hosted
-    needs: [az-login]
+    needs: az-login
     env:
           ARM_USE_MSI: "true"
           ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
@@ -52,10 +52,10 @@ jobs:
     #   run: |
     #     echo ${{ needs.az-login.outputs.AZURE_CREDENTIALS }} > ~/.azure/credentials
     
-    - name: Set up Azure CLI
-      run: |
-        az login --identity --username "${{ secrets.AZURE_CLIENT_ID }}"
-        az account set --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
+    # - name: Set up Azure CLI
+    #   run: |
+    #     az login --identity --username "${{ secrets.AZURE_CLIENT_ID }}"
+    #     az account set --subscription "${{ secrets.AZURE_SUBSCRIPTION_ID }}"
 
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
