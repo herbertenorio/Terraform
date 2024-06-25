@@ -82,7 +82,7 @@ jobs:
         framework: terraform
         quiet: false
         output_format: cli
-        log_level: DEBUG
+        log_level: INFO
         
     # Save plan to artifacts  
     - name: Publish Terraform Plan
