@@ -72,6 +72,7 @@ jobs:
         
     # Save plan to artifacts  
     - name: Publish Terraform Plan
+      if: steps.tf-plan.outputs.exitcode == 2
       uses: actions/upload-artifact@v4
       with:
         name: tfplan
