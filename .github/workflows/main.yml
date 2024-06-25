@@ -8,6 +8,7 @@ on:
 jobs:
 
   az-login:
+    name: 'Login to Azure'
     uses: ./.github/workflows/login.yml
     secrets:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
@@ -20,6 +21,8 @@ jobs:
     name: 'Terraform Plan'
     runs-on: self-hosted
     needs: [az-login]
+    environment:
+      name: 'inherit'
     outputs:
       tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
     
