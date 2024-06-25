@@ -9,7 +9,7 @@ jobs:
 
   setup:
     name: Set environment
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     outputs:
       DEPLOY_ENVIRONMENT: ${{ steps.env.outputs.DEPLOY_ENVIRONMENT }}
     steps:
