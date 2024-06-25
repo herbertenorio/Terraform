@@ -81,7 +81,7 @@ jobs:
         quiet: false
         file: tfplan.json
         output_format: cli,sarif
-        repo-root-for-plan-enrichment: ./
+        repo_root_for_plan_enrichment: ./
         
     # Save plan to artifacts  
     - name: Publish Terraform Plan
