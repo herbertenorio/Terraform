@@ -7,7 +7,7 @@ on:
 
 jobs:
 
-  az-login:
+  login:
     name: 'Login to Azure'
     uses: ./.github/workflows/login.yml
     secrets:
@@ -20,11 +20,12 @@ jobs:
   terraform-plan:
     name: 'Terraform Plan'
     runs-on: self-hosted
-    needs: [az-login]
+    needs: [login]
     env:
       AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
       AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_ACCESS_KEY: ${{ needs.login.outputs.ARM_ACCESS_KEY }}
     outputs:
       tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
     
