@@ -7,9 +7,21 @@ on:
 
 jobs:
 
+  scan:
+    runs-on: self-hosted
+    steps:
+      - uses: actions/checkout@v2
+      - name: Test with Checkov
+        id: checkov
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: .
+          framework: terraform 
+
   setup:
     name: Set environment
     runs-on: self-hosted
+    needs: [scan]
     outputs:
       DEPLOY_ENVIRONMENT: ${{ steps.env.outputs.DEPLOY_ENVIRONMENT }}
     steps:
