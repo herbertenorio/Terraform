@@ -1,11 +1,27 @@
 on:
   workflow_call:
+    inputs:
+      AZURE_CLIENT_ID:
+        required: true
+        type: string
+      AZURE_TENANT_ID:
+        required: true
+        type: string
+      AZURE_SUBSCRIPTION_ID:
+        required: true
+        type: string
+      TF_BACKEND_RESOURCE_GROUP_NAME:
+        required: true
+        type: string
+      TF_BACKEND_STORAGE_ACCOUNT_NAME:  
+        required: true
+        type: string
 
 jobs: 
   Login:
     runs-on: self-hosted
     steps:
-    
+
     - name: Checkout
       uses: actions/checkout@v4
     
