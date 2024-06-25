@@ -78,6 +78,7 @@ jobs:
       id: checkov
       uses: bridgecrewio/checkov-action@master
       with:
+        quiet: false
         file: tfplan.json
         
     # Save plan to artifacts  
