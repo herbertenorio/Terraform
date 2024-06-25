@@ -78,11 +78,10 @@ jobs:
       id: checkov
       uses: bridgecrewio/checkov-action@master
       with:
+        directory: .
         framework: terraform
         quiet: false
-        file: ./tfplan.json
         output_format: cli,sarif
-        repo_root_for_plan_enrichment: ./
         log_level: DEBUG
         
     # Save plan to artifacts  
