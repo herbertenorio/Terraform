@@ -34,4 +34,5 @@ jobs:
       id: get-key-st
       run: |
         ACCOUNT_KEY=$(az storage account keys list --resource-group  ${{ secrets.TF_BACKEND_RESOURCE_GROUP_NAME }} --account-name ${{ secrets.TF_BACKEND_STORAGE_ACCOUNT_NAME }}  --query '[0].value' -o tsv)
-        echo "::set-output name=ARM_ACCESS_KEY::$ACCOUNT_KEY"
+        echo "ACCOUNT_KEY=$ACCOUNT_KEY" >> $GITHUB_ENV
+        echo "ACCOUNT_KEY=$ACCOUNT_KEY" >> $GITHUB_OUTPUT
