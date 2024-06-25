@@ -81,7 +81,6 @@ jobs:
         quiet: false
         file: tfplan.json
         output_format: cli
-        log_level: DEBUG
         
     # Save plan to artifacts  
     - name: Publish Terraform Plan
