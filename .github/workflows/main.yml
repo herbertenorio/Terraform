@@ -7,25 +7,9 @@ on:
 
 jobs:
 
-  login:
-    name: 'Login to Azure'
-    uses: ./.github/workflows/login.yml
-    secrets:
-      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }} 
-      TF_BACKEND_RESOURCE_GROUP_NAME: ${{ secrets.TF_BACKEND_RESOURCE_GROUP_NAME }}
-      TF_BACKEND_STORAGE_ACCOUNT_NAME: ${{ secrets.TF_BACKEND_STORAGE_ACCOUNT_NAME }}
-
-  terraform-plan:
+ terraform-plan:
     name: 'Terraform Plan'
     runs-on: self-hosted
-    needs: [login]
-    env:
-      AZURE_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
-      AZURE_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
-      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-      #ARM_ACCESS_KEY: ${{ needs.login.env.ARM_ACCESS_KEY }}
     outputs:
       tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
     
@@ -34,6 +18,20 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v4
+    
+    - name: Azure login
+      uses: azure/login@v2
+      with:
+        auth-type: IDENTITY
+        client-id:  ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id:  ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id:  ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Get Storage Account Key
+      id: get-key-st
+      run: |
+        ACCOUNT_KEY=$(az storage account keys list --resource-group  ${{ secrets.TF_BACKEND_RESOURCE_GROUP_NAME }} --account-name ${{ secrets.TF_BACKEND_STORAGE_ACCOUNT_NAME }}  --query '[0].value' -o tsv)
+        echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> $GITHUB_ENV
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
@@ -79,6 +77,20 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v4
+    
+    - name: Azure login
+      uses: azure/login@v2
+      with:
+        auth-type: IDENTITY
+        client-id:  ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id:  ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id:  ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Get Storage Account Key
+      id: get-key-st
+      run: |
+        ACCOUNT_KEY=$(az storage account keys list --resource-group  ${{ secrets.TF_BACKEND_RESOURCE_GROUP_NAME }} --account-name ${{ secrets.TF_BACKEND_STORAGE_ACCOUNT_NAME }}  --query '[0].value' -o tsv)
+        echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> $GITHUB_ENV
 
     # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
     - name: Terraform Init
