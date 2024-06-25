@@ -79,7 +79,6 @@ jobs:
       uses: bridgecrewio/checkov-action@master
       with:
         file: tfplan.json
-        framework: terraform  
         
     # Save plan to artifacts  
     - name: Publish Terraform Plan
