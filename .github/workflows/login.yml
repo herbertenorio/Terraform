@@ -1,7 +1,7 @@
 on:
   workflow_call:
     inputs:
-      AZURE_CLIENT_ID:
+      azureClientId:
         required: true
         type: string
       AZURE_TENANT_ID:
@@ -29,7 +29,7 @@ jobs:
       uses: azure/login@v2
       with:
         auth-type: IDENTITY
-        client-id:  ${{ inputs.AZURE_CLIENT_ID }}
+        client-id:  ${{ inputs.azureClientId }}
         tenant-id:  ${{ inputs.AZURE_TENANT_ID }}
         subscription-id:  ${{ inputs.AZURE_SUBSCRIPTION_ID }}
 
