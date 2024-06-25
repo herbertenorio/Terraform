@@ -80,8 +80,8 @@ jobs:
       with:
         directory: .
         framework: terraform
-        quiet: false
         output_format: cli
+        quiet: false
         log_level: INFO
         
     # Save plan to artifacts  
