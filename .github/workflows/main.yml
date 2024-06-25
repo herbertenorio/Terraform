@@ -70,14 +70,15 @@ jobs:
         fi
     
     - name: Terraform show
-      if: steps.tf-plan.outputs.exitcode == 2
+      #if: steps.tf-plan.outputs.exitcode == 2
       run: terraform show -json tfplan | jq > tfplan.json
     
     - name: Scan Checkov
-      if: steps.tf-plan.outputs.exitcode == 2
+      #if: steps.tf-plan.outputs.exitcode == 2
       id: checkov
       uses: bridgecrewio/checkov-action@master
       with:
+        framework: terraform
         quiet: false
         file: tfplan.json
         output_format: cli,sarif
