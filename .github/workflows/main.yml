@@ -81,7 +81,7 @@ jobs:
         directory: .
         framework: terraform
         quiet: false
-        output_format: cli,sarif
+        output_format: cli
         log_level: DEBUG
         
     # Save plan to artifacts  
