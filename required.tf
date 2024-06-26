@@ -13,6 +13,8 @@ terraform {
   #   key                  = "terraform.tfstate"
   # }
 
+  backend "azurerm" {}
+
   required_version = ">= 1.0"
 
 }
