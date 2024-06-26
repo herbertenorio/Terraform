@@ -73,10 +73,6 @@ jobs:
           exit 0
         fi
     
-    - name: Terraform show
-      if: steps.tf-plan.outputs.exitcode == 2
-      run: terraform show -json tfplan | jq > tfplan.json
-    
     - name: Scan Checkov
       if: steps.tf-plan.outputs.exitcode == 2
       id: checkov
@@ -86,7 +82,6 @@ jobs:
         framework: terraform
         output_format: cli
         quiet: false
-        log_level: INFO
         
     # Save plan to artifacts  
     - name: Publish Terraform Plan
