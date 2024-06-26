@@ -18,20 +18,23 @@ jobs:
           echo "DEPLOY_ENVIRONMENT=$([[ ${{ github.ref_name }} == 'main' ]] && echo 'production' || echo ${{ github.ref_name }})" >> $GITHUB_OUTPUT
 
   login:
-    - name: Azure login
-      uses: azure/login@v2
-      needs: setup
-      with:
-        auth-type: IDENTITY
-        client-id:  ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id:  ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id:  ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+    name: Azure login
+    runs-on: self-hosted
+    needs: setup
+    steps:
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          auth-type: IDENTITY
+          client-id:  ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id:  ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id:  ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-    - name: Get Storage Account Key
-      id: get-key-st
-      run: |
-        ACCOUNT_KEY=$(az storage account keys list --resource-group  ${{ secrets.TF_BACKEND_RESOURCE_GROUP_NAME }} --account-name ${{ secrets.TF_BACKEND_STORAGE_ACCOUNT_NAME }}  --query '[0].value' -o tsv)
-        echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> $GITHUB_ENV
+      - name: Get Storage Account Key
+        id: get-key-st
+        run: |
+          ACCOUNT_KEY=$(az storage account keys list --resource-group  ${{ secrets.TF_BACKEND_RESOURCE_GROUP_NAME }} --account-name ${{ secrets.TF_BACKEND_STORAGE_ACCOUNT_NAME }}  --query '[0].value' -o tsv)
+          echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> $GITHUB_ENV
 
   terraform-plan:
     name: 'Terraform Plan'
