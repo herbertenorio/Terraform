@@ -42,6 +42,10 @@ jobs:
     needs: login
     outputs:
       tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
+    env:
+      ARM_ACCESS_KEY: ${{ steps.get-key-st.outputs.ARM_ACCESS_KEY }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_USE_MSI: true
     
     steps:
 
@@ -121,6 +125,10 @@ jobs:
     runs-on: self-hosted
     #environment: ${{ needs.setup.outputs.DEPLOY_ENVIRONMENT }}
     needs: [terraform-plan]
+    env:
+      ARM_ACCESS_KEY: ${{ steps.get-key-st.outputs.ARM_ACCESS_KEY }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+      ARM_USE_MSI: true
 
     steps:
 
