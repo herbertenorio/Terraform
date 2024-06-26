@@ -21,6 +21,8 @@ jobs:
     name: Azure login
     runs-on: self-hosted
     needs: setup
+    outputs:
+      ARM_ACCESS_KEY: ${{ steps.get-key-st.outputs.ARM_ACCESS_KEY }}
     steps:
       - name: Azure login
         uses: azure/login@v2
@@ -34,7 +36,7 @@ jobs:
         id: get-key-st
         run: |
           ACCOUNT_KEY=$(az storage account keys list --resource-group  ${{ secrets.TF_BACKEND_RESOURCE_GROUP_NAME }} --account-name ${{ secrets.TF_BACKEND_STORAGE_ACCOUNT_NAME }}  --query '[0].value' -o tsv)
-          echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> $GITHUB_ENV
+          echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> $GITHUB_OUTPUT
 
   terraform-plan:
     name: 'Terraform Plan'
@@ -43,7 +45,7 @@ jobs:
     outputs:
       tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
     env:
-      ARM_ACCESS_KEY: ${{ steps.get-key-st.outputs.ARM_ACCESS_KEY }}
+      ARM_ACCESS_KEY: ${{ needs.login.outputs.ARM_ACCESS_KEY }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       ARM_USE_MSI: true
     
@@ -126,7 +128,7 @@ jobs:
     #environment: ${{ needs.setup.outputs.DEPLOY_ENVIRONMENT }}
     needs: [terraform-plan]
     env:
-      ARM_ACCESS_KEY: ${{ steps.get-key-st.outputs.ARM_ACCESS_KEY }}
+      ARM_ACCESS_KEY: ${{ needs.login.outputs.ARM_ACCESS_KEY }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       ARM_USE_MSI: true
 
