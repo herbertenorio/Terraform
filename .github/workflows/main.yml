@@ -34,13 +34,13 @@ jobs:
         id: get-key-st
         run: |
           ACCOUNT_KEY=$(az storage account keys list --resource-group  ${{ secrets.TF_BACKEND_RESOURCE_GROUP_NAME }} --account-name ${{ secrets.TF_BACKEND_STORAGE_ACCOUNT_NAME }}  --query '[0].value' -o tsv)
-          echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> $GITHUB_OUTPUT
+          echo "ARM_ACCESS_KEY=$ACCOUNT_KEY" >> $GITHUB_ENV
 
-      - name: Create ARM_ACCESS_KEY secret
-        uses: actions/github-secret@v2
-        with:
-          name: ARM_ACCESS_KEY
-          secrets: ${{ steps.get-key-st.outputs.ARM_ACCESS_KEY }}
+      # - name: Create ARM_ACCESS_KEY secret
+      #   uses: actions/github-secret@v2
+      #   with:
+      #     name: ARM_ACCESS_KEY
+      #     secrets: ${{ steps.get-key-st.outputs.ARM_ACCESS_KEY }}
 
   terraform-plan:
     name: 'Terraform Plan'
@@ -49,7 +49,7 @@ jobs:
     outputs:
       tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
     env:
-      ARM_ACCESS_KEY: ${{ secrets.ARM_ACCESS_KEY }}
+      # ARM_ACCESS_KEY: ${{ secrets.ARM_ACCESS_KEY }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       ARM_USE_MSI: true
     
@@ -132,7 +132,7 @@ jobs:
     #environment: ${{ needs.setup.outputs.DEPLOY_ENVIRONMENT }}
     needs: [terraform-plan]
     env:
-      ARM_ACCESS_KEY: ${{ secrets.ARM_ACCESS_KEY }}
+      # ARM_ACCESS_KEY: ${{ secrets.ARM_ACCESS_KEY }}
       ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
       ARM_USE_MSI: true
 
