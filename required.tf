@@ -12,10 +12,6 @@ terraform {
 
 }
 
-provider "azuread" {
-  use_cli = false
-}
-
 provider "azurerm" {
   features {}
 }
