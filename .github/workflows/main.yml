@@ -6,6 +6,7 @@ on:
         description: 'Escolha o tipo de job a ser executado'
         required: true
         default: 'setup'
+        type: choice
         options:
           Setup: 'setup'
           CI: 'terraform-plan'
