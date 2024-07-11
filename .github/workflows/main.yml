@@ -1,8 +1,5 @@
-name: Run Azure Login with User-assigned Managed Identity
+name: Terraform with User-assigned Managed Identity
 on:
-  push:
-    branches:
-      - '**'
   workflow_dispatch:
     inputs:
       job-type:
