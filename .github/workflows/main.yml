@@ -4,6 +4,15 @@ on:
     branches:
       - '**'
   workflow_dispatch:
+    inputs:
+      job-type:
+        description: 'Escolha o tipo de job a ser executado'
+        required: true
+        default: 'setup'
+        options:
+          Setup: 'setup'
+          CI: 'terraform-plan'
+          CD: 'terraform-apply'
 
 jobs:
   setup:
