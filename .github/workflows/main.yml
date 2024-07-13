@@ -60,7 +60,7 @@ jobs:
     - name: Terraform Plan
       id: tf-plan
       run: |
-        terraform plan -detailed-exitcode -no-color -out tfplan ||
+        terraform plan -detailed-exitcode -out tfplan ||
         echo "exitcode=$?" >> $GITHUB_OUTPUT
         
         if [ $exitcode -eq 1 ]; then
@@ -79,6 +79,7 @@ jobs:
         framework: terraform
         output_format: cli
         quiet: false
+        log_level: DEBUG
         
     # Save plan to artifacts  
     - name: Publish Terraform Plan
