@@ -7,3 +7,8 @@ variable "location" {
   description = "Localização do grupo de recursos no Azure"
   type        = string
 }
+
+variable "storage_account_name" {
+  description = "Nome da conta de armazenamento a ser criada"
+  type        = string
+}
