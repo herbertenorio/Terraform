@@ -6,7 +6,14 @@ terraform {
     }
   }
 
-  backend "azurerm" {}
+  #backend "azurerm" {}
+
+  backend "azurerm" {
+    resource_group_name  = "RG-terraform-state-dev"
+    storage_account_name = "tfstate00project00aks"
+    container_name       = "tfstate"
+    key                  = "terraform.tfstate"
+  }
 
   required_version = ">= 1.0"
 
