@@ -2,7 +2,9 @@ name: Check Successful Build
 
 on:
   pull_request:
-    types: [opened, synchronize]
+    branches:
+     - dev
+     - main
 
 jobs:
   check:

@@ -12,4 +12,4 @@ resource "azurerm_resource_group" "rg" {
 
 #   enable_https_traffic_only = false
 
-# } ---
+# }
