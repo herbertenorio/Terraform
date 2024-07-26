@@ -22,6 +22,8 @@ jobs:
         id: env
         run: |
           echo "DEPLOY_ENVIRONMENT=$([[ ${{ github.ref_name }} == 'main' ]] && echo 'production' || echo ${{ github.ref_name }})" >> $GITHUB_OUTPUT
+          DOMAIN=$(echo ${{ github.repository }} | awk -F'/' '{print $2}')"001"
+          echo $DOMAIN
 
   terraform-plan:
     name: 'Terraform Plan'
