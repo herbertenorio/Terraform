@@ -1,40 +1,39 @@
-name: PR Check
+name: Check Successful Build
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened]
+    types: [opened, synchronize]
 
 jobs:
-  check_ci:
-    name: Check CI
+  check:
+    name: Check-Status
     runs-on: vm-hosted
+
     steps:
-      - name: Check out the repository
-        uses: actions/checkout@v3
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Get the branch name
-        id: get_branch
-        run: echo "branch_name=$(echo ${GITHUB_HEAD_REF})" >> $GITHUB_ENV
+    - name: Check if there is a successful workflow run for the current commit
+      id: check-status
+      run: |
+        OWNER=$(jq -r '.repository.owner.login' < $GITHUB_EVENT_PATH)
+        REPO=$(jq -r '.repository.name' < $GITHUB_EVENT_PATH)
+        PR_COMMIT_SHA=$(jq -r '.pull_request.head.sha' < $GITHUB_EVENT_PATH)
 
-      - name: Get the latest workflow run
-        id: get_latest_workflow_run
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const branchName = process.env.branch_name;
-            const workflows = await github.actions.listWorkflowRuns({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              branch: branchName,
-              status: 'success',
-              event: 'push'
-            });
-            if (workflows.data.workflow_runs.length == 0) {
-              core.setFailed(`No successful CI workflow run found for branch ${branchName}`);
-            } else {
-              core.setOutput('workflow_run_id', workflows.data.workflow_runs[0].id);
-            }
+        echo "Owner: $OWNER"
+        echo "Repository: $REPO"
+        echo "PR Commit SHA: $PR_COMMIT_SHA"
 
-      - name: Verify the CI workflow
-        if: success()
-        run: echo "CI workflow run was successful for branch ${GITHUB_HEAD_REF}"
+        # Check for a successful run for the specific commit SHA
+        RESPONSE=$(curl -s \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/$OWNER/$REPO/actions/runs?head_sha=$PR_COMMIT_SHA&status=success&per_page=1")
+
+        SUCCESSFUL_RUN_COUNT=$(echo "$RESPONSE" | jq '.total_count')
+
+        if [ "$SUCCESSFUL_RUN_COUNT" -eq 0 ]; then
+          echo "No successful workflow run found for commit SHA $PR_COMMIT_SHA."
+          exit 1
+        else
+          echo "Found successful workflow run(s) for commit SHA $PR_COMMIT_SHA."
+        fi
