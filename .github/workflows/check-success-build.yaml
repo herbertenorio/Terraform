@@ -6,6 +6,7 @@ on:
 
 jobs:
   check_ci:
+    name: Check CI
     runs-on: vm-hosted
     steps:
       - name: Check out the repository
