@@ -1,0 +1,39 @@
+name: PR Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check_ci:
+    runs-on: vm-hosted
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v3
+
+      - name: Get the branch name
+        id: get_branch
+        run: echo "branch_name=$(echo ${GITHUB_HEAD_REF})" >> $GITHUB_ENV
+
+      - name: Get the latest workflow run
+        id: get_latest_workflow_run
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const branchName = process.env.branch_name;
+            const workflows = await github.actions.listWorkflowRuns({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              branch: branchName,
+              status: 'success',
+              event: 'push'
+            });
+            if (workflows.data.workflow_runs.length == 0) {
+              core.setFailed(`No successful CI workflow run found for branch ${branchName}`);
+            } else {
+              core.setOutput('workflow_run_id', workflows.data.workflow_runs[0].id);
+            }
+
+      - name: Verify the CI workflow
+        if: success()
+        run: echo "CI workflow run was successful for branch ${GITHUB_HEAD_REF}"
