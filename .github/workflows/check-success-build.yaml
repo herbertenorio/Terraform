@@ -3,9 +3,8 @@ name: Check Successful Build
 on:
   pull_request:
     branches:
-     - dev
-     - main
-
+     - develop
+     
 jobs:
   check:
     name: Check-Status
