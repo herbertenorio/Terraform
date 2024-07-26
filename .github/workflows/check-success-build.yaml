@@ -1,4 +1,4 @@
-name: PR Check
+name: Check Successful Build
 
 on:
   pull_request:
@@ -6,6 +6,7 @@ on:
 
 jobs:
   check:
+    name: Check-Status
     runs-on: vm-hosted
 
     steps:
