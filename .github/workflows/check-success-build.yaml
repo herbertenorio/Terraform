@@ -1,5 +1,4 @@
-name: Check Successful Build
-show_in_ui: false
+name: :zap:Check Successful Build
 
 on:
   pull_request:
