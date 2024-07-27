@@ -1,4 +1,4 @@
-name: ":zap: Check Successful Build"
+name: :rocket: Check Successful Build
 
 on:
   pull_request:
