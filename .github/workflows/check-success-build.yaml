@@ -1,0 +1,40 @@
+name: ⚡ Check Successful Build
+
+on:
+  pull_request:
+    branches:
+     - develop
+     
+jobs:
+  check:
+    name: Check-Status
+    runs-on: vm-hosted
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Check if there is a successful workflow run for the current commit
+      id: check-status
+      run: |
+        OWNER=$(jq -r '.repository.owner.login' < $GITHUB_EVENT_PATH)
+        REPO=$(jq -r '.repository.name' < $GITHUB_EVENT_PATH)
+        PR_COMMIT_SHA=$(jq -r '.pull_request.head.sha' < $GITHUB_EVENT_PATH)
+
+        echo "Owner: $OWNER"
+        echo "Repository: $REPO"
+        echo "PR Commit SHA: $PR_COMMIT_SHA"
+
+        # Check for a successful run for the specific commit SHA - 
+        RESPONSE=$(curl -s \
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          "https://api.github.com/repos/$OWNER/$REPO/actions/runs?head_sha=$PR_COMMIT_SHA&status=success&per_page=1")
+
+        SUCCESSFUL_RUN_COUNT=$(echo "$RESPONSE" | jq '.total_count')
+
+        if [ "$SUCCESSFUL_RUN_COUNT" -eq 0 ]; then
+          echo "No successful workflow run found for commit SHA $PR_COMMIT_SHA."
+          exit 1
+        else
+          echo "Found successful workflow run(s) for commit SHA $PR_COMMIT_SHA."
+        fi
