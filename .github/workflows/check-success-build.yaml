@@ -1,4 +1,5 @@
 name: Check Successful Build
+show_in_ui: false
 
 on:
   pull_request:
