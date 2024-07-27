@@ -1,4 +1,4 @@
-name:  ":zap: CI/CD" 
+name: ⚡ CI / CD 
 
   workflow_dispatch:
     inputs:
