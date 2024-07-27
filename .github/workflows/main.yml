@@ -1,4 +1,4 @@
-name:  ":rocket: CI/CD" 
+name:  ":zap: CI/CD" 
 
   workflow_dispatch:
     inputs:
