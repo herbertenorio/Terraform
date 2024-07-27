@@ -1,4 +1,4 @@
-name: :rocket: Check Successful Build
+name: ⚡ Check Successful Build
 
 on:
   pull_request:
