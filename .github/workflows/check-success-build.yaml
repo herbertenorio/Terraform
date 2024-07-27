@@ -1,11 +1,11 @@
 name: Check Successful Build
+show_in_ui: false
 
 on:
   pull_request:
     branches:
-     - dev
-     - main
-
+     - develop
+     
 jobs:
   check:
     name: Check-Status
