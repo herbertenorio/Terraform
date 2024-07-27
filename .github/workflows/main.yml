@@ -14,7 +14,7 @@ on:
 
 jobs:
   setup:
-    name: Environment and Domain
+    name: ":gear: Environment and Domain"
     runs-on: ${{ github.event.inputs.runner_label }}
     outputs:
       DEPLOY_ENVIRONMENT: ${{ steps.env.outputs.DEPLOY_ENVIRONMENT }}
