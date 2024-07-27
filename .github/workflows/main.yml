@@ -1,5 +1,5 @@
-name: Terraform with User-assigned Managed Identity
-on:
+name: 🚀 CI/CD 
+
   workflow_dispatch:
     inputs:
       runner_label:
