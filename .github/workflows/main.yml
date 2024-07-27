@@ -13,17 +13,26 @@ on:
 
 jobs:
   setup:
-    name: Set Environment
+    name: Environment and Domain
     runs-on: ${{ github.event.inputs.runner_label }}
     outputs:
       DEPLOY_ENVIRONMENT: ${{ steps.env.outputs.DEPLOY_ENVIRONMENT }}
+      DOMAIN: ${{ steps.env.outputs.DOMAIN }}
     steps:
-      - name: "compute environment variables"
+      - name: "Set environment and domain variables"
         id: env
         run: |
-          echo "DEPLOY_ENVIRONMENT=$([[ ${{ github.ref_name }} == 'main' ]] && echo 'production' || echo ${{ github.ref_name }})" >> $GITHUB_OUTPUT
-          DOMAIN=$(echo ${{ github.repository }} | awk -F'/' '{print $2}')"001"
-          echo $DOMAIN
+          if [[ ${{ github.ref_name }} == 'main' ]]; then
+            echo "DEPLOY_ENVIRONMENT=PRD" >> $GITHUB_OUTPUT
+          elif [[ ${{ github.ref_name }} == 'hml' ]]; then
+            echo "DEPLOY_ENVIRONMENT=HML" >> $GITHUB_OUTPUT
+          else
+            echo "DEPLOY_ENVIRONMENT=DEV" >> $GITHUB_OUTPUT
+          fi
+
+          echo "DOMAIN=$(echo ${{ github.repository }} | awk -F'/' '{print $2}')"001"" >> $GITHUB_OUTPUT
+      
+#echo "DEPLOY_ENVIRONMENT=$([[ ${{ github.ref_name }} == 'main' ]] && echo 'production' || echo ${{ github.ref_name }})" >> $GITHUB_OUTPUT
 
   terraform-plan:
     name: 'Terraform Plan'
@@ -33,6 +42,12 @@ jobs:
       tfplanExitCode: ${{ steps.tf-plan.outputs.exitcode }}
     
     steps:
+
+    # Verify the environment and domain
+    - name: Check Environment and Domain
+      run: |
+        echo "Environment: " ${{ needs.setup.outputs.DEPLOY_ENVIRONMENT }}
+        echo "Domain: " ${{ needs.setup.outputs.DOMAIN }}
 
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
