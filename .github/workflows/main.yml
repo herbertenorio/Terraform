@@ -11,6 +11,14 @@ on:
         options:
           - vm-hosted
           - docker-hosted
+      job_choice:
+        description: 'Escolha o job'
+        required: true
+        default: 'terraform-plan'
+        type: choice
+        options:
+          - terraform-plan
+          - terraform-apply
 
 jobs:
   setup:
