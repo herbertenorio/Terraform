@@ -109,7 +109,7 @@ jobs:
     - name: Scan Checkov
       if: steps.tf-plan.outputs.exitcode == 2
       id: checkov
-      uses: bridgecrewio/checkov-action@master
+      uses: bridgecrewio/checkov-action@39af4356d060f18cc43712934dae91a79bb1590e
       with:
         directory: .
         framework: terraform
