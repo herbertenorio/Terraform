@@ -45,6 +45,7 @@ jobs:
 
   terraform-plan:
     name: '📋 Terraform Plan'
+    if: ${{ github.event.inputs['job_choice'] == 'terraform-plan' }}
     runs-on: ${{ github.event.inputs.runner_label }}
     needs: [setup]
     outputs:
@@ -125,7 +126,7 @@ jobs:
                 
   terraform-apply:
     name: '🚀 Terraform Apply'
-    if: needs.terraform-plan.outputs.tfplanExitCode == '2'
+    if: ${{ (needs.terraform-plan.outputs.tfplanExitCode == '2') && (github.event.inputs['job_choice'] == 'terraform-apply') }}
     runs-on: ${{ github.event.inputs.runner_label }}
     #environment: ${{ needs.setup.outputs.DEPLOY_ENVIRONMENT }}
     needs: [terraform-plan]
