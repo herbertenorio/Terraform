@@ -9,7 +9,8 @@ on:
         default: 'vm-hosted'
         type: choice
         options:
-          - vm-hosted
+          #- vm-hosted
+          - ubuntu-latest
           - docker-hosted
       job_choice:
         description: 'Escolha o job'
